@@ -5,7 +5,7 @@ from piece import Piece
 class Board:
     def __init__(self):
         self.board = []
-        self.white_left = self.black_left = 12
+        self.red_left = self.green_left = 12
         self.create_board()
         
     def draw_board(self, screen):
@@ -58,6 +58,10 @@ class Board:
     def remove(self, pieces):
         for piece in pieces:
             self.board[piece.row][piece.col] = 0
+            if piece.color == red:
+                self.red_left -= 1
+            elif piece.color == green:
+                self.green_left -= 1
 
     def get_valid_moves(self, piece):
         moves = {}
@@ -75,27 +79,8 @@ class Board:
                     if 0 <= jump_row < rows and 0 <= jump_col < cols and self.board[jump_row][jump_col] == 0:
                         # moves[(jump_row, jump_col)] = [(row, col)]
                         moves[(jump_row, jump_col)] = [self.board[row][col]]  # Store the actual Piece object
-                        self._check_additional_jumps(piece, jump_row, jump_col, direction, moves, [self.board[row][col]])        
-        # jump_moves = {move: skipped for move, skipped in moves.items() if skipped}
-        # return jump_moves if jump_moves else moves
+                        self._check_additional_jumps(piece, jump_row, jump_col, direction, moves, [self.board[row][col]])
         return moves
-    
-    # def _check_additional_jumps(self, piece, row, col, direction, moves, captured):
-    #     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-    #     if (row + col) % 2 == 0:
-    #         directions += [(-1, -1), (1, 1), (-1, 1), (1, -1)]
-        
-    #     for new_direction in directions:
-    #         new_row, new_col = row + new_direction[0], col + new_direction[1]
-    #         jump_row, jump_col = new_row + new_direction[0], new_col + new_direction[1]
-
-    #         if 0 <= new_row < rows and 0 <= new_col < cols and 0 <= jump_row < rows and 0 <= jump_col < cols:
-    #             jumped_piece = self.board[new_row][new_col]  # Get the piece being jumped over
-
-    #             if jumped_piece != 0 and jumped_piece.color != piece.color and self.board[jump_row][jump_col] == 0:
-    #                 if (jump_row, jump_col) not in moves:
-    #                     moves[(jump_row, jump_col)] = captured + [jumped_piece]  # Ensure we add a valid piece
-    #                     self._check_additional_jumps(piece, jump_row, jump_col, new_direction, moves, captured + [jumped_piece])
 
 
     def _check_additional_jumps(self, piece, row, col, direction, moves, captured):
@@ -111,5 +96,4 @@ class Board:
                     if 0 <= jump_row < rows and 0 <= jump_col < cols and self.board[jump_row][jump_col] == 0:
                         if (jump_row, jump_col) not in moves:
                             moves[(jump_row, jump_col)] = captured + [self.board[new_row][new_col]]
-                            # moves[(jump_row, jump_col)] = captured + [(new_row, new_col)]
                             self._check_additional_jumps(piece, jump_row, jump_col, new_direction, moves, captured + [(new_row, new_col)])

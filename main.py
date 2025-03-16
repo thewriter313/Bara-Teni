@@ -17,8 +17,21 @@ def main():
     clock = pygame.time.Clock()
 
     game = Game(screen)
+    font = pygame.font.Font(None, 74)  # Initialize font for winner message
 
     while running:
+
+        winner = game.winner()
+        if winner:
+            text = font.render(f"{winner} wins!", True, (255,255,255))  # White text
+            # Center the text on the screen
+            screen.blit(text, (width // 2 - text.get_width() // 2, height // 2 - text.get_height() // 2))
+            pygame.display.update()
+            pygame.time.wait(3000) 
+            running = False  
+
+        if not game.has_valid_moves():
+            game.change_turn()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
