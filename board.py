@@ -41,7 +41,6 @@ class Board:
 
     def move(self, piece, row, col):
         self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
-        print(self.board)
         piece.move_piece(row, col)
 
     def get_piece(self, row, col):
@@ -77,7 +76,6 @@ class Board:
                 elif self.board[row][col].color != piece.color:
                     jump_row, jump_col = row + direction[0], col + direction[1]
                     if 0 <= jump_row < rows and 0 <= jump_col < cols and self.board[jump_row][jump_col] == 0:
-                        # moves[(jump_row, jump_col)] = [(row, col)]
                         moves[(jump_row, jump_col)] = [self.board[row][col]]  # Store the actual Piece object
                         self._check_additional_jumps(piece, jump_row, jump_col, direction, moves, [self.board[row][col]])
         return moves
@@ -96,4 +94,41 @@ class Board:
                     if 0 <= jump_row < rows and 0 <= jump_col < cols and self.board[jump_row][jump_col] == 0:
                         if (jump_row, jump_col) not in moves:
                             moves[(jump_row, jump_col)] = captured + [self.board[new_row][new_col]]
-                            self._check_additional_jumps(piece, jump_row, jump_col, new_direction, moves, captured + [(new_row, new_col)])
+                            self._check_additional_jumps(piece, jump_row, jump_col, new_direction, moves, captured + [self.board[new_row][new_col]])
+
+
+    def copy(self):
+        """Create a deep copy of the board for AI simulation."""
+        new_board = Board()
+        new_board.board = [[0 for _ in range(cols)] for _ in range(rows)]
+        for row in range(rows):
+            for col in range(cols):
+                piece = self.board[row][col]
+                if piece != 0:
+                    new_piece = Piece(row, col, piece.color)
+                    new_board.board[row][col] = new_piece
+        new_board.red_left = self.red_left
+        new_board.green_left = self.green_left
+        return new_board
+
+    def get_all_moves(self, color):
+        """Get all possible moves for a given color, including from/to positions and skipped pieces."""
+        moves = []
+        for row in range(rows):
+            for col in range(cols):
+                piece = self.board[row][col]
+                if piece != 0 and piece.color == color:
+                    valid_moves = self.get_valid_moves(piece)
+                    for move, skipped in valid_moves.items():
+                        # print("skipped type:", type(skipped), "content:", skipped)
+                        skipped_positions = [(p.row, p.col) for p in skipped]
+                        moves.append(((row, col), move, skipped_positions))
+        return moves
+
+    def winner(self):
+        """Determine the winner based on remaining pieces."""
+        if self.red_left == 0:
+            return green
+        elif self.green_left == 0:
+            return red
+        return None

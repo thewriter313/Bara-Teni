@@ -20,7 +20,7 @@ class Piece:
         self.calc_pos(row,col)
 
     def draw_piece(self, screen):
-        pygame.draw.circle(screen, self.color, (self.x, self.y), 50)
+        pygame.draw.circle(screen, self.color, (self.x, self.y), 40)
 
     def __repr__(self):
         return str(self.color)

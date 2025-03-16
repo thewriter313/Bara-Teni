@@ -7,3 +7,5 @@ red = (255,0,0)
 green = (0,255,0)
 white = (255,255,255)
 orange = (255,156,0)
+
+color_names = {red: "Red", green: "Green"}
