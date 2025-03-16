@@ -25,10 +25,10 @@ def main():
         if winner:
             text = font.render(f"{winner} wins!", True, (255,255,255))  # White text
             # Center the text on the screen
-            screen.blit(text, (width // 2 - text.get_width() // 2, height // 2 - text.get_height() // 2))
+            screen.blit(text, (width // 2 - text.get_width() // 2, height - 70))
             pygame.display.update()
             pygame.time.wait(3000) 
-            running = False  
+            game = Game(screen)
 
         if not game.has_valid_moves():
             game.change_turn()
